@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
 
-# Troque essa URL pelo banco MySQL/PostgreSQL depois
-import os
+# Usar variável de ambiente DATABASE_URL ou fallback para SQLite local
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///pedidos.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -18,7 +18,8 @@ class Pedido(db.Model):
     vencimento = db.Column(db.String(20))
     status = db.Column(db.String(50))
 
-with app.app_context():
+@app.before_serving
+def create_tables():
     db.create_all()
 
 @app.route('/')
@@ -48,10 +49,6 @@ def marcar_feito(pedido_id):
     pedido.status = 'Já Feitos'
     db.session.commit()
     return redirect(url_for('index', status=request.args.get('status', 'Pendentes')))
-
-@app.before_first_request
-def create_tables():
-    db.create_all()
 
 @app.route('/delete/<int:pedido_id>')
 def apagar_pedido(pedido_id):
