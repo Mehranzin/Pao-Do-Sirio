@@ -4,7 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 # Troque essa URL pelo banco MySQL/PostgreSQL depois
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pedidos.db'
+import os
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -46,6 +47,10 @@ def marcar_feito(pedido_id):
     pedido.status = 'Já Feitos'
     db.session.commit()
     return redirect(url_for('index', status=request.args.get('status', 'Pendentes')))
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 @app.route('/delete/<int:pedido_id>')
 def apagar_pedido(pedido_id):
