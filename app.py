@@ -18,7 +18,8 @@ class Pedido(db.Model):
     vencimento = db.Column(db.String(20))
     status = db.Column(db.String(50))
 
-db.create_all()
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def index():
