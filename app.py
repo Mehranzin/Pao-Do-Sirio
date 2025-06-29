@@ -4,7 +4,7 @@ import os
 
 app = Flask(__name__)
 
-# Usar variável de ambiente DATABASE_URL ou fallback para SQLite local
+# Usa a variável de ambiente DATABASE_URL ou SQLite como fallback
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///pedidos.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -18,8 +18,8 @@ class Pedido(db.Model):
     vencimento = db.Column(db.String(20))
     status = db.Column(db.String(50))
 
-@app.before_serving
-def create_tables():
+# Cria as tabelas no contexto da aplicação (Render aceita isso no deploy)
+with app.app_context():
     db.create_all()
 
 @app.route('/')
@@ -58,4 +58,7 @@ def apagar_pedido(pedido_id):
     return redirect(url_for('index', status=request.args.get('status', 'Pendentes')))
 
 if __name__ == '__main__':
+    # Apenas para rodar localmente com criação de tabela
+    with app.app_context():
+        db.create_all()
     app.run(host='0.0.0.0', port=5000)
