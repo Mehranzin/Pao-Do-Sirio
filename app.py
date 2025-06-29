@@ -4,8 +4,8 @@ import os
 
 app = Flask(__name__)
 
-# Usa a variável de ambiente DATABASE_URL ou SQLite como fallback
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///pedidos.db'
+# Pega a URL do banco de dados PostgreSQL do Render
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -18,8 +18,8 @@ class Pedido(db.Model):
     vencimento = db.Column(db.String(20))
     status = db.Column(db.String(50))
 
-# Cria as tabelas no contexto da aplicação (Render aceita isso no deploy)
-with app.app_context():
+@app.before_first_request
+def create_tables():
     db.create_all()
 
 @app.route('/')
@@ -57,8 +57,4 @@ def apagar_pedido(pedido_id):
     db.session.commit()
     return redirect(url_for('index', status=request.args.get('status', 'Pendentes')))
 
-if __name__ == '__main__':
-    # Apenas para rodar localmente com criação de tabela
-    with app.app_context():
-        db.create_all()
-    app.run(host='0.0.0.0', port=5000)
+# Não usar app.run() no Render – quem executa é o Gunicorn
