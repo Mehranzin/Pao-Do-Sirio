@@ -4,7 +4,6 @@ import os
 
 app = Flask(__name__)
 
-# Pega a URL do banco de dados PostgreSQL do Render
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -18,8 +17,8 @@ class Pedido(db.Model):
     vencimento = db.Column(db.String(20))
     status = db.Column(db.String(50))
 
-@app.before_first_request
-def create_tables():
+# Cria as tabelas assim que o app inicia, no contexto da aplicação
+with app.app_context():
     db.create_all()
 
 @app.route('/')
@@ -56,5 +55,3 @@ def apagar_pedido(pedido_id):
     db.session.delete(pedido)
     db.session.commit()
     return redirect(url_for('index', status=request.args.get('status', 'Pendentes')))
-
-# Não usar app.run() no Render – quem executa é o Gunicorn
