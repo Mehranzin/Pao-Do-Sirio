@@ -1,10 +1,17 @@
+import os
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-import os
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+database_url = os.environ.get('DATABASE_URL')
+if not database_url:
+    raise RuntimeError("DATABASE_URL não está definida")
+
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -17,7 +24,6 @@ class Pedido(db.Model):
     vencimento = db.Column(db.String(20))
     status = db.Column(db.String(50))
 
-# Cria as tabelas assim que o app inicia, no contexto da aplicação
 with app.app_context():
     db.create_all()
 
@@ -45,13 +51,15 @@ def add_pedido():
 @app.route('/feito/<int:pedido_id>')
 def marcar_feito(pedido_id):
     pedido = Pedido.query.get(pedido_id)
-    pedido.status = 'Já Feitos'
-    db.session.commit()
+    if pedido:
+        pedido.status = 'Já Feitos'
+        db.session.commit()
     return redirect(url_for('index', status=request.args.get('status', 'Pendentes')))
 
 @app.route('/delete/<int:pedido_id>')
 def apagar_pedido(pedido_id):
     pedido = Pedido.query.get(pedido_id)
-    db.session.delete(pedido)
-    db.session.commit()
+    if pedido:
+        db.session.delete(pedido)
+        db.session.commit()
     return redirect(url_for('index', status=request.args.get('status', 'Pendentes')))
