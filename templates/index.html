@@ -76,6 +76,7 @@
                   class="form-control"
                   placeholder="Supermercado"
                   required
+                  autocomplete="off"
                 />
               </div>
               <div class="col">
@@ -84,6 +85,7 @@
                   class="form-control"
                   placeholder="Pacotes"
                   required
+                  autocomplete="off"
                 />
               </div>
               <div class="col">
@@ -92,6 +94,7 @@
                   class="form-control"
                   placeholder="Valor (R$)"
                   required
+                  autocomplete="off"
                 />
               </div>
               <div class="col">
@@ -100,6 +103,7 @@
                   class="form-control"
                   placeholder="Dias Vencimento"
                   required
+                  autocomplete="off"
                 />
               </div>
               <div class="col">
@@ -142,9 +146,10 @@
               >
               <a
                 href="/marcar/{{p.id}}?status={{status}}"
-                class="btn btn-sm btn-primary"
-                >Marcar</a
+                class="btn btn-sm {% if p.marcado %}btn-warning{% else %}btn-primary{% endif %}"
               >
+                {% if p.marcado %} Desmarcar {% else %} Marcar {% endif %}
+              </a>
             </div>
           </div>
           {% endfor %}
