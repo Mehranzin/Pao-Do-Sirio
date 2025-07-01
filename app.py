@@ -23,6 +23,7 @@ class Pedido(db.Model):
     valor = db.Column(db.String(20))
     vencimento = db.Column(db.String(20))
     status = db.Column(db.String(50))
+    marcado = db.Column(db.Boolean, default=False)  # <-- novo campo
 
 with app.app_context():
     db.create_all()
@@ -61,5 +62,13 @@ def apagar_pedido(pedido_id):
     pedido = Pedido.query.get(pedido_id)
     if pedido:
         db.session.delete(pedido)
+        db.session.commit()
+    return redirect(url_for('index', status=request.args.get('status', 'Pendentes')))
+
+@app.route('/marcar/<int:pedido_id>')
+def marcar_pedido(pedido_id):
+    pedido = Pedido.query.get(pedido_id)
+    if pedido:
+        pedido.marcado = not pedido.marcado  # alterna entre True/False
         db.session.commit()
     return redirect(url_for('index', status=request.args.get('status', 'Pendentes')))
