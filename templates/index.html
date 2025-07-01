@@ -233,22 +233,7 @@
         </div>
       </div>
     </div>
-   <body>
-    <div class="container-fluid">
-      <div class="row flex-wrap">
-        <div class="col-12 col-md-2 bg-light p-3">
-          <!-- ... seus botões aqui ... -->
-          <button id="toggle-dark" class="btn btn-secondary w-100 mb-3">Ativar Dark Mode</button>
-          <form method="get" action="/">
-            <!-- seus botões de status -->
-          </form>
-        </div> 
 
-        <div class="col-12 col-md-10 p-4">
-          <!-- resto da interface -->
-        </div>
-      </div>
-  </div>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const apagarLinks = document.querySelectorAll("a.btn-danger");
@@ -269,21 +254,19 @@
             }
           });
         });
+      });
 
-        const btn = document.getElementById("toggle-dark");
-        if (localStorage.getItem("darkMode") === "true") {
-          document.documentElement.classList.add("dark");
-          btn.textContent = "Desativar Dark Mode";
-        } else {
-          btn.textContent = "Ativar Dark Mode";
-        }
-
-        btn.addEventListener("click", () => {
-          const isDark = document.documentElement.classList.toggle("dark");
-          localStorage.setItem("darkMode", isDark);
-          btn.textContent = isDark ? "Desativar Dark Mode" : "Ativar Dark Mode";
-        });
+      const btn = document.getElementById("toggle-dark");
+      if (localStorage.getItem("darkMode") === "true") {
+        document.documentElement.classList.add("dark");
+        btn.textContent = "Desativar Dark Mode";
+      }
+      btn.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("darkMode", isDark);
+        btn.textContent = isDark ? "Desativar Dark Mode" : "Ativar Dark Mode";
       });
     </script>
+    <button id="toggle-dark">Ativar Dark Mode</button>
   </body>
 </html>
