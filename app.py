@@ -31,7 +31,7 @@ with app.app_context():
 @app.route('/')
 def index():
     status = request.args.get('status', 'Pendentes')
-    pedidos = Pedido.query.filter_by(status=status).all()
+    pedidos = Pedido.query.filter_by(status=status).order_by(Pedido.id).all()
     return render_template('index.html', pedidos=pedidos, status=status)
 
 @app.route('/add', methods=['POST'])
