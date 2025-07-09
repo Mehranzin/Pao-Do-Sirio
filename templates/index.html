@@ -264,5 +264,15 @@
     >
       Mehran Productions®
     </p>
+
+    <!--SCRIPT PARA RECARREGAR A PÁGINA-->
+    <script>
+      window.addEventListener("load", function () {
+        history.pushState(null, document.title, location.href);
+        window.addEventListener("popstate", function (event) {
+          location.reload();
+        });
+      });
+    </script>
   </body>
 </html>
