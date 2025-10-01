@@ -34,7 +34,7 @@
         transition: background-color 0.3s ease;
       }
       .menu-btn:hover {
-        background-color: #0077cc !important; /* cor que você pediu */
+        background-color: #0077cc !important;
         color: white;
       }
       .active-btn {
@@ -50,48 +50,6 @@
       .pedido-card.marcado {
         background-color: #007bff;
         color: white;
-      }
-
-      /* Ajuste no formulário para mobile */
-      @media (max-width: 767.98px) {
-        .row.flex-wrap {
-          flex-wrap: nowrap !important;
-          flex-direction: column !important;
-        }
-        .col-md-2 {
-          height: auto !important;
-          position: relative !important;
-          width: 100% !important;
-          min-height: auto !important;
-          padding-bottom: 10px !important;
-        }
-        .col-md-10 {
-          width: 100% !important;
-          padding: 1rem !important;
-        }
-        form.mb-4 .row.g-2 {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-        }
-        form.mb-4 .row.g-2 > .col {
-          flex: 1 1 48%;
-          max-width: 48%;
-        }
-        form.mb-4 .row.g-2 > .col:first-child {
-          flex: 1 1 100%;
-          max-width: 100%;
-        }
-        form.mb-4 .row.g-2 > .col:nth-child(4),
-        form.mb-4 .row.g-2 > .col:nth-child(5) {
-          flex: 1 1 48%;
-          max-width: 48%;
-        }
-        form.mb-4 .row.g-2 > .col:nth-child(6),
-        form.mb-4 .row.g-2 > .col:nth-child(7) {
-          flex: 1 1 48%;
-          max-width: 48%;
-        }
       }
       :root {
         --bg-color: white;
@@ -111,6 +69,7 @@
   <body>
     <div class="container-fluid">
       <div class="row flex-wrap">
+        <!-- MENU LATERAL -->
         <div class="col-12 col-md-2 bg-light p-3">
           <form method="get" action="/">
             <button
@@ -144,6 +103,7 @@
           </form>
         </div>
 
+        <!-- CONTEÚDO -->
         <div class="col-12 col-md-10 p-4">
           <form method="post" action="/add" class="mb-4">
             <div class="row g-2">
@@ -199,11 +159,19 @@
             </div>
           </form>
 
+          <!-- LISTA DE PEDIDOS -->
           {% for p in pedidos %}
           <div class="pedido-card {% if p.marcado %}marcado{% endif %}">
-            <strong>📦 {{p.nome}}</strong> | Pacotes: {{p.pacotes}} | Tamanho:
-            {{p.tamanho}} | Valor: R${{p.valor}} | Vencimento: {{p.vencimento}}
-            dias
+            <strong>📦 {{ p.nome }}</strong> - Status: {{ p.status }}
+            <ul>
+              {% for pacote in p.pacotes %}
+              <li>
+                Pacotes: {{ pacote.pacotes }} | Tamanho: {{ pacote.tamanho }} |
+                Valor: R${{ pacote.valor }} | Vencimento: {{ pacote.vencimento
+                }} dias
+              </li>
+              {% endfor %}
+            </ul>
             <div class="mt-2">
               {% if p.status != 'Já Feitos' %}
               <a
@@ -229,50 +197,5 @@
         </div>
       </div>
     </div>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const apagarLinks = document.querySelectorAll("a.btn-danger");
-        const feitoLinks = document.querySelectorAll("a.btn-success");
-
-        apagarLinks.forEach(function (link) {
-          link.addEventListener("click", function (e) {
-            if (!confirm("Tem certeza que deseja apagar este pedido?")) {
-              e.preventDefault();
-            }
-          });
-        });
-
-        feitoLinks.forEach(function (link) {
-          link.addEventListener("click", function (e) {
-            if (!confirm("Confirmar como 'Já Feito'?")) {
-              e.preventDefault();
-            }
-          });
-        });
-      });
-    </script>
-    <p
-      style="
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        font-size: 14px;
-        opacity: 0.7;
-        margin: 0;
-      "
-    >
-      Mehran Productions®
-    </p>
-
-    <!--SCRIPT PARA RECARREGAR A PÁGINA-->
-    <script>
-      window.addEventListener("load", function () {
-        history.pushState(null, document.title, location.href);
-        window.addEventListener("popstate", function (event) {
-          location.reload();
-        });
-      });
-    </script>
   </body>
 </html>
